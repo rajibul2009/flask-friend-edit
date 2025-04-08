@@ -38,9 +38,9 @@
             min-height: 100px;
         }
         /* English-only input style */
-       /* .english-only {
+        .english-only {
             direction: ltr;
-        }*/
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -219,24 +219,27 @@
 <!--        });-->
 <!--    </script>-->
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const allInputs = document.querySelectorAll('input, textarea');
 
-        allInputs.forEach(input => {
-            input.addEventListener('input', function () {
-                // Remove any non-ASCII character (i.e. Bengali or other Unicode)
-                this.value = this.value.replace(/[^\x00-\x7F]/g, '');
-            });
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const englishOnlyFields = document.querySelectorAll('.english-only');
 
-            input.addEventListener('keypress', function (e) {
-                // Block any keypress that isn't ASCII
-                if (/[^\x00-\x7F]/.test(String.fromCharCode(e.keyCode))) {
-                    e.preventDefault();
-                }
-            });
+    englishOnlyFields.forEach(field => {
+        field.addEventListener('input', function (e) {
+            // Remove Bengali characters only
+            this.value = this.value.replace(/[\u0980-\u09FF]/g, '');
+        });
+
+        field.addEventListener('keypress', function (e) {
+            const key = String.fromCharCode(e.which || e.keyCode);
+            const isBangla = /[\u0980-\u09FF]/.test(key);
+            if (isBangla) {
+                e.preventDefault();
+            }
         });
     });
+});
 </script>
+
 </body>
 </html>
