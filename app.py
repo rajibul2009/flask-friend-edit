@@ -5,9 +5,6 @@ import pandas as pd
 
 app = Flask(__name__)
 
-
-
-
 # SQLite ডাটাবেসের পাথ
 DATABASE = 'friends.db'
 
@@ -102,8 +99,26 @@ def delete(id):
     return redirect(url_for('index'))
 
 # এক্সেল ফাইল ডাউনলোড করার ফাংশন
+# @app.route('/download_excel')
+# def download_excel():
+#     conn = get_db()
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT * FROM friends")
+#     friends = cursor.fetchall()
+#
+#     # ডাটাকে pandas DataFrame এ রূপান্তর করা
+#     df = pd.DataFrame(friends, columns=['ID','Name', 'School', 'Birthdate', 'Profession', 'Phone', 'Email', 'Current Address', 'Permanent Address'])
+#
+#     # এক্সেল ফাইল তৈরি করা
+#     file_path = 'friends_list.xlsx'
+#     df.to_excel(file_path, index=False, engine='openpyxl')
+#
+#     # এক্সেল ফাইল ডাউনলোড করার জন্য প্রস্তাব
+#     return send_file(file_path, as_attachment=True)
+
 @app.route('/download_excel')
 def download_excel():
+    # ডাটাবেস থেকে ডাটা নিয়ে আসা
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM friends")
@@ -116,8 +131,11 @@ def download_excel():
     file_path = 'friends_list.xlsx'
     df.to_excel(file_path, index=False, engine='openpyxl')
 
-    # এক্সেল ফাইল ডাউনলোড করার জন্য প্রস্তাব
-    return send_file(file_path, as_attachment=True)
+    # ফাইল ক্লায়েন্টকে পাঠানো
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return "File not found", 404
 @app.route('/')
 def home():
     return "Hello, বন্ধু! এটা Render থেকে লাইভ চলছে!"
